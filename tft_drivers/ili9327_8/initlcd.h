@@ -42,12 +42,8 @@ case ILI9327_8:
 
 	LCD_Write_COM(0xD2);  // Power_Setting for Normal Mode / power setting
 	LCD_Write_DATA(0x01); // Gamma Driver Amplifier:1.00, Source Driver Amplifier: 1.00
+  LCD_Write_DATA(0x44);
 
-#ifdef MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_INIT_LCD2
-  LCD_Write_COM(0x44);  // To chyba drugi parametr do 0xD2 - powinno być LCD_write_DATA a nie set_tear_scanline
-#else
-	LCD_Write_DATA(0x44);
-#endif
 	LCD_Write_COM(0xC8);  // Gamma Setting / Set Gamma
 	LCD_Write_DATA(0x04);
 	LCD_Write_DATA(0x67);
@@ -69,18 +65,14 @@ case ILI9327_8:
 	LCD_Write_DATA(0x00);
 	LCD_Write_DATA(0x00);
 	LCD_Write_DATA(0x00);
-	LCD_Write_DATA(0xeF);
+	LCD_Write_DATA(0xEF);
 
 	LCD_Write_COM(0x2B);  // Set_page_address
 	LCD_Write_DATA(0x00);
 	LCD_Write_DATA(0x00);
 	LCD_Write_DATA(0x01);
+  LCD_Write_DATA(0x8F);
 
-#ifdef MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_INIT_LCD2
-	LCD_Write_DATA(0x3F); // Czasem tu jest 0x8F
-#else
-	LCD_Write_DATA(0x8F);
-#endif
 	LCD_Write_COM(0x29);  // Set_display_on / display on
 	LCD_Write_COM(0x2C);  // Write_memory_start / display on
 	break;
