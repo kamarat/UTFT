@@ -54,6 +54,7 @@
 #define PORTRAIT 0
 #define LANDSCAPE 1
 
+// Define controllers
 #define HX8347A			0
 #define ILI9327			1
 #define SSD1289			2
@@ -152,6 +153,9 @@
 #define LATCHED_16		17
 
 #define NOTINUSE		255
+
+// Defines boards
+#define OPEN_SMART_ILI9327  1
 
 //*********************************
 // COLORS

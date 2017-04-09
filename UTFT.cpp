@@ -49,9 +49,9 @@
 #if defined(__AVR__)
 	#include <avr/pgmspace.h>
 	#include "hardware/avr/HW_AVR.h"
-	#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
+	
+  #if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 		#include "hardware/avr/HW_ATmega1280.h" 
-
 	#elif defined(__AVR_ATmega328P__)
 		#include "hardware/avr/HW_ATmega328P.h"
 	#elif defined(__AVR_ATmega32U4__)
@@ -60,10 +60,10 @@
 		#error "ATmega168 MCUs are not supported because they have too little flash memory!"
 	#elif defined(__AVR_ATmega1284P__)
 		#include "hardware/avr/HW_ATmega1284P.h"
-
 	#else
 		#error "Unsupported AVR MCU!"
 	#endif
+  
 /*
 #elif defined(__PIC32MX__)
   #include "hardware/pic32/HW_PIC32.h"
@@ -78,19 +78,22 @@
 	#include "hardware/pic32/HW_PIC32MX795F512L.h"
   #else
     #error "Unsupported PIC32 MCU!"
-  #endif  
+  #endif
+  */
+  
 #elif defined(__arm__)
 	#include "hardware/arm/HW_ARM.h"
-	#if defined(__SAM3X8E__)
+	
+  #if defined(__SAM3X8E__)
 		#pragma message("Compiling for Arduino Due (AT91SAM3X8E)...")
 		#include "hardware/arm/HW_SAM3X8E.h"
-	#elif defined(__MK20DX128__) || defined(__MK20DX256__)
+	/*#elif defined(__MK20DX128__) || defined(__MK20DX256__)
 		#pragma message("Compiling for Teensy 3.x (MK20DX128VLH7 / MK20DX256VLH7)...")
 		#include "hardware/arm/HW_MX20DX256.h"
+    */
 	#else
 		#error "Unsupported ARM MCU!"
 	#endif
-*/
 #endif
 #include "memorysaver.h"
 
@@ -270,11 +273,14 @@ void UTFT::InitLCD(byte orientation)
 		_set_direction_registers(display_transfer_mode);
 
 	sbi(P_RST, B_RST);
-	_delay_ms(5); 
+	//_delay_ms(5);
+  delay(5);
 	cbi(P_RST, B_RST);
-	_delay_ms(15);
+	//_delay_ms(15);
+  delay(5);
 	sbi(P_RST, B_RST);
-	_delay_ms(15);
+	//_delay_ms(15);
+  delay(5);
 
 	cbi(P_CS, B_CS);
 
