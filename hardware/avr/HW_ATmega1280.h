@@ -67,20 +67,13 @@ void UTFT::LCD_Writ_Bus8(char VH,char VL, byte mode)
 		break;
 	case 8:
 #if defined(USE_UNO_SHIELD_ON_MEGA)
-		PORTG &= ~0x20;
-		PORTG |= (VH & 0x10)<<1;
-		PORTH &= ~0x18;
-		PORTH |= (VH & 0xC0)>>3;
-		PORTE &= ~0x3B;
-		PORTE |= (VH & 0x03) + ((VH & 0x0C)<<2) + ((VH & 0x20)>>2);
-		pulse_low(P_WR, B_WR);
-		PORTG &= ~0x20;
+		PORTH &= ~0x78;
+		PORTH |= ((VL & 0x03)<<5)+((VL & 0xC0)>>3);
+    PORTG &= ~0x20;
 		PORTG |= (VL & 0x10)<<1;
-		PORTH &= ~0x18;
-		PORTH |= (VL & 0xC0)>>3;
-		PORTE &= ~0x3B;
-		PORTE |= (VL & 0x03) + ((VL & 0x0C)<<2) + ((VL & 0x20)>>2);
-		pulse_low(P_WR, B_WR);
+		PORTE &= ~0x38;
+		PORTE |=((VL & 0x20)>>2)+ ((VL& 0x0C)<<2);
+    pulse_low(P_WR, B_WR);
 #else
 		PORTA = VL;
 		pulse_low(P_WR, B_WR);
@@ -228,9 +221,14 @@ void UTFT::LCD_Writ_Bus16(char VH,char VL, byte mode)
 void UTFT::_set_direction_registers(byte mode)
 {
 #if defined(USE_UNO_SHIELD_ON_MEGA)
-	DDRH = 0x18;
-	DDRG = 0x20;
-	DDRE = 0x3B;
+	//DDRH = 0x18;
+	//DDRG = 0x20;
+	//DDRE = 0x3B;
+  for(int p=2;p<10;p++) {
+    pinMode(p,OUTPUT);
+  } 
+  pinMode(A0, OUTPUT);
+  digitalWrite(A0, HIGH); // подать на вывод RD дисплея, лог.1  
 #else
 	if (mode!=LATCHED_16)
 	{
@@ -311,12 +309,20 @@ void UTFT::_fast_fill_8(int ch, long pix)
 	long blocks;
 
 #if defined(USE_UNO_SHIELD_ON_MEGA)
-	PORTG &= ~0x20;
+	/*PORTG &= ~0x20;
 	PORTG |= (ch & 0x10)<<1;
 	PORTH &= ~0x18;
 	PORTH |= (ch & 0xC0)>>3;
 	PORTE &= ~0x3B;
 	PORTE |= (ch & 0x03) + ((ch & 0x0C)<<2) + ((ch & 0x20)>>2);
+  */
+  PORTH &= ~0x78;
+  PORTH |= ((VL & 0x03)<<5)+((VL & 0xC0)>>3);
+  PORTG &= ~0x20;
+  PORTG |= (VL & 0x10)<<1;
+  PORTE &= ~0x38;
+  PORTE |=((VL & 0x20)>>2)+ ((VL& 0x0C)<<2);
+  pulse_low(P_WR, B_WR);
 #else
 	PORTA = ch;
 #endif
@@ -341,9 +347,9 @@ void UTFT::_fast_fill_8(int ch, long pix)
 		pulse_low(P_WR, B_WR);pulse_low(P_WR, B_WR);
 		pulse_low(P_WR, B_WR);pulse_low(P_WR, B_WR);
 	}
-	if ((pix % 16) != 0)
-		for (int i=0; i<(pix % 16)+1; i++)
-		{
+	if ((pix % 16) != 0) {
+		for (int i=0; i<(pix % 16)+1; i++) {
 			pulse_low(P_WR, B_WR);pulse_low(P_WR, B_WR);
 		}
+  }
 }
