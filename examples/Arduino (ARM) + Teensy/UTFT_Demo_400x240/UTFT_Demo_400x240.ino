@@ -23,7 +23,7 @@ extern uint8_t SmallFont[];
 // ElecHouse TFT LCD/SD Shield for Arduino Due : <display model>,22,23,31,33
 //
 // Remember to change the model parameter to suit your display module!
-UTFT myGLCD(ITDB32WD,38,39,40,41);
+UTFT myGLCD(NIC35WS,38,39,40,41);
 
 void setup()
 {
@@ -32,6 +32,8 @@ void setup()
 // Setup the LCD
   myGLCD.InitLCD();
   myGLCD.setFont(SmallFont);
+  myGLCD.show_color_bar();
+  delay(2000);
 }
 
 void loop()

@@ -45,7 +45,7 @@
 #ifndef UTFT_h
 #define UTFT_h
 
-#define UTFT_VERSION	278
+#define UTFT_VERSION	277
 
 #define LEFT 0
 #define RIGHT 9999
@@ -86,6 +86,7 @@
 #define CPLD			29
 #define HX8353C			30
 #define ILI9327_8		31
+#define ILI9327_8_UNO	32
 
 #define ITDB32			0	// HX8347-A (16bit)
 #define ITDB32WC		1	// ILI9327  (16bit)
@@ -144,9 +145,7 @@
 #define CTE50CPLD		29	// CPLD		(16bit)
 #define CTE70CPLD		29	// CPLD		(16bit)
 #define DMTFT18101      30  // HX8353C  (Serial 5Pin)
-#define ILI9327_8       31  // ILI9327  (8bit) 400x240
 #define NIC35WS			31	// ILI9327  (8bit)
-
 
 #define SERIAL_4PIN		4
 #define SERIAL_5PIN		5
@@ -176,18 +175,6 @@
 #define VGA_PURPLE		0x8010
 #define VGA_TRANSPARENT	0xFFFFFFFF
 
-
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_LCD_WRIT_BUS 1
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_SHOW_COLOR_BAR 1
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_DISPLAY_TRANSFER_MODE 1 //8 bit mode
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_CLR_SCR 1
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_SET_PIXEL 1
-
-//optional:
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_WRITE_COM_DATA 1
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_INIT_LCD 1
-#define MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_INIT_LCD2 1
-
 #if defined(__AVR__)
 	#include "Arduino.h"
 	#include "hardware/avr/HW_AVR_defines.h"
@@ -213,9 +200,7 @@ class UTFT
 	public:
 		UTFT();
 		UTFT(byte model, int RS, int WR, int CS, int RST, int SER=0);
-#ifdef MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_SHOW_COLOR_BAR
-		void show_color_bar();
-#endif
+		void 	show_color_bar();
 		void	InitLCD(byte orientation=LANDSCAPE);
 		void	clrScr();
 		void	drawPixel(int x, int y);
@@ -270,11 +255,11 @@ class UTFT
 		byte			__p1, __p2, __p3, __p4, __p5;
 		_current_font	cfont;
 		boolean			_transparent;
-
-		void LCD_Writ_Bus8(char VH,char VL, byte mode);
-		void LCD_Writ_Bus16(char VH,char VL, byte mode);
+		
+		void LCD_Writ_Bus(char VL);
+//		void LCD_Writ_Bus(char VH,char VL, byte mode);
 		void LCD_Write_COM(char VL);
-		void LCD_Write_DATA(char VH,char VL);
+//		void LCD_Write_DATA(char VH,char VL);
 		void LCD_Write_DATA(char VL);
 		void LCD_Write_COM_DATA(char com1,int dat1);
 		void _hw_special_init();

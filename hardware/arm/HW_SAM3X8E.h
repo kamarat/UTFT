@@ -76,6 +76,13 @@ void UTFT::LCD_Writ_Bus(char VH,char VL, byte mode)
 		REG_PIOC_CODR=0xFF000;
 		REG_PIOC_SODR=(VL<<12) & 0xFF000;
 		pulse_low(P_WR, B_WR);
+#elif defined(CHINA_MEGA)
+		REG_PIOA_CODR=0x0000C000;
+		REG_PIOD_CODR=0x0000064F;
+		REG_PIOA_SODR=(VL & 0x06)<<13;
+		(VL & 0x01) ? REG_PIOB_SODR = 0x4000000 : REG_PIOB_CODR = 0x4000000;
+		REG_PIOD_SODR=((VL & 0x78)>>3) | ((VL & 0x80)>>1);
+		pulse_low(P_WR, B_WR);
 #else
 		REG_PIOA_CODR=0x0000C000;
 		REG_PIOD_CODR=0x0000064F;

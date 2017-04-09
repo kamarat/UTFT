@@ -51,6 +51,7 @@
 	#include "hardware/avr/HW_AVR.h"
 	#if defined(__AVR_ATmega1280__) || defined(__AVR_ATmega2560__)
 		#include "hardware/avr/HW_ATmega1280.h" 
+
 	#elif defined(__AVR_ATmega328P__)
 		#include "hardware/avr/HW_ATmega328P.h"
 	#elif defined(__AVR_ATmega32U4__)
@@ -59,9 +60,11 @@
 		#error "ATmega168 MCUs are not supported because they have too little flash memory!"
 	#elif defined(__AVR_ATmega1284P__)
 		#include "hardware/avr/HW_ATmega1284P.h"
+
 	#else
 		#error "Unsupported AVR MCU!"
 	#endif
+/*
 #elif defined(__PIC32MX__)
   #include "hardware/pic32/HW_PIC32.h"
   #if defined(__32MX320F128H__)
@@ -87,6 +90,7 @@
 	#else
 		#error "Unsupported ARM MCU!"
 	#endif
+*/
 #endif
 #include "memorysaver.h"
 
@@ -96,14 +100,21 @@ UTFT::UTFT()
 
 UTFT::UTFT(byte model, int RS, int WR, int CS, int RST, int SER)
 { 
-	word	dsx[] = {239, 239, 239, 239, 239, 239, 175, 175, 239, 127, 127, 239, 271, 479, 239, 239, 239, 239, 239, 239, 479, 319, 239, 175, 127, 239, 239, 319, 319, 799, 127, 239};
-	word	dsy[] = {319, 399, 319, 319, 319, 319, 219, 219, 399, 159, 127, 319, 479, 799, 319, 319, 319, 319, 319, 319, 799, 479, 319, 219, 159, 319, 319, 479, 479, 479, 159, 399};
-	byte	dtm[] = {16, 16, 16, 8, 8, 16, 8, SERIAL_4PIN, 16, SERIAL_5PIN, SERIAL_5PIN, 16, 16, 16, 8, 16, LATCHED_16, 8, 16, 8, 16, 16, 16, 8, SERIAL_5PIN, SERIAL_5PIN, SERIAL_4PIN, 16, 16, 16, SERIAL_5PIN, 8};
+/*	word	dsx[] = {239, 239, 239, 239, 239, 239, 175, 175, 239, 127, 127, 239, 271, 479, 239, 239, 239, 239, 239, 239, 479, 319, 239, 175, 127, 239, 239, 319, 319, 799, 127, 239, 239};
+	word	dsy[] = {319, 399, 319, 319, 319, 319, 219, 219, 399, 159, 127, 319, 479, 799, 319, 319, 319, 319, 319, 319, 799, 479, 319, 219, 159, 319, 319, 479, 479, 479, 159, 399, 399};
+	byte	dtm[] = {16, 16, 16, 8, 8, 16, 8, SERIAL_4PIN, 16, SERIAL_5PIN, SERIAL_5PIN, 16, 16, 16, 8, 16, LATCHED_16, 8, 16, 8, 16, 16, 16, 8, SERIAL_5PIN, SERIAL_5PIN, SERIAL_4PIN, 16, 16, 16, SERIAL_5PIN, 8, 8};
 
 	disp_x_size =			dsx[model];
 	disp_y_size =			dsy[model];
-	display_transfer_mode =	dtm[model];
+	display_transfer_mode =		dtm[model];
 	display_model =			model;
+*/
+
+	disp_x_size =			239;
+	disp_y_size =			399;
+	display_transfer_mode =		8;
+	display_model =			model;
+
 
 	__p1 = RS;
 	__p2 = WR;
@@ -111,10 +122,11 @@ UTFT::UTFT(byte model, int RS, int WR, int CS, int RST, int SER)
 	__p4 = RST;
 	__p5 = SER;
 
+/*
 	if (display_transfer_mode == SERIAL_4PIN)
 	{
-			display_transfer_mode=1;
-			display_serial_mode=SERIAL_4PIN;
+		display_transfer_mode=1;
+		display_serial_mode=SERIAL_4PIN;
 	}
 	if (display_transfer_mode == SERIAL_5PIN)
 	{
@@ -122,8 +134,12 @@ UTFT::UTFT(byte model, int RS, int WR, int CS, int RST, int SER)
 		display_serial_mode=SERIAL_5PIN;
 	}
 
-	if (display_transfer_mode!=1)
+*/
+	pinMode(A0,OUTPUT);
+ 	digitalWrite(A0, HIGH);
+/*	if (display_transfer_mode!=1)
 	{
+*/
 		_set_direction_registers(display_transfer_mode);
 		P_RS	= portOutputRegister(digitalPinToPort(RS));
 		B_RS	= digitalPinToBitMask(RS);
@@ -133,7 +149,7 @@ UTFT::UTFT(byte model, int RS, int WR, int CS, int RST, int SER)
 		B_CS	= digitalPinToBitMask(CS);
 		P_RST	= portOutputRegister(digitalPinToPort(RST));
 		B_RST	= digitalPinToBitMask(RST);
-		if (display_transfer_mode==LATCHED_16)
+/*		if (display_transfer_mode==LATCHED_16)
 		{
 			P_ALE	= portOutputRegister(digitalPinToPort(SER));
 			B_ALE	= digitalPinToBitMask(SER);
@@ -141,6 +157,7 @@ UTFT::UTFT(byte model, int RS, int WR, int CS, int RST, int SER)
 			pinMode(8,OUTPUT);
 			digitalWrite(8, LOW);
 		}
+
 	}
 	else
 	{
@@ -161,49 +178,79 @@ UTFT::UTFT(byte model, int RS, int WR, int CS, int RST, int SER)
 			B_RS	= digitalPinToBitMask(SER);
 		}
 	}
+*/
 }
 
 void UTFT::LCD_Write_COM(char VL)  
 {   
-	if (display_transfer_mode!=1)
+/*	if (display_transfer_mode!=1)
 	{
+*/
 		cbi(P_RS, B_RS);
-		LCD_Writ_Bus8(0x00,VL,display_transfer_mode);
-        sbi(P_RS, B_RS);
-	}
+		LCD_Writ_Bus(VL);
+/*	}
 	else
-		LCD_Writ_Bus8(0x00,VL,display_transfer_mode);
+		LCD_Writ_Bus(VL);
+*/
 }
 
+/*
 void UTFT::LCD_Write_DATA(char VH,char VL)
 {
+
 	if (display_transfer_mode!=1)
 	{
-		//sbi(P_RS, B_RS);
-		LCD_Writ_Bus16(VH,VL,display_transfer_mode);
+
+		sbi(P_RS, B_RS);
+		LCD_Writ_Bus(VH,VL,display_transfer_mode);
+
 	}
+
 	else
 	{
-		LCD_Writ_Bus8(0x01,VH,display_transfer_mode);
-		LCD_Writ_Bus8(0x01,VL,display_transfer_mode);
+		LCD_Writ_Bus(0x01,VH,display_transfer_mode);
+		LCD_Writ_Bus(0x01,VL,display_transfer_mode);
 	}
+
+
 }
+*/
+
 
 void UTFT::LCD_Write_DATA(char VL)
 {
-	if (display_transfer_mode!=1)
+		sbi(P_RS, B_RS);
+		LCD_Writ_Bus(VL);
+/*	if (display_transfer_mode!=1)
 	{
-		//sbi(P_RS, B_RS);
-		LCD_Writ_Bus8(0x00,VL,display_transfer_mode);
+		sbi(P_RS, B_RS);
+		LCD_Writ_Bus(VL);
 	}
 	else
-		LCD_Writ_Bus8(0x01,VL,display_transfer_mode);
+		LCD_Writ_Bus(0x01,VL,display_transfer_mode);
+
+*/
 }
 
 void UTFT::LCD_Write_COM_DATA(char com1,int dat1)
 {
-     LCD_Write_COM(com1);
-     LCD_Write_DATA(dat1>>8,dat1);
+		LCD_Write_COM(com1);
+		LCD_Write_DATA(dat1>>8);
+		LCD_Write_DATA(dat1);
+
+
+/*     if (display_model != 31)
+	{	 
+		LCD_Write_COM(com1);
+		LCD_Write_DATA(dat1>>8,dat1);
+	}
+	else
+	{
+		LCD_Write_COM(com1);
+		LCD_Write_DATA(dat1>>8);
+		LCD_Write_DATA(dat1);
+	}
+*/
 }
 
 void UTFT::InitLCD(byte orientation)
@@ -216,28 +263,27 @@ void UTFT::InitLCD(byte orientation)
 	pinMode(__p3,OUTPUT);
 	if (__p4 != NOTINUSE)
 		pinMode(__p4,OUTPUT);
-	if ((display_transfer_mode==LATCHED_16) or ((display_transfer_mode==1) and (display_serial_mode==SERIAL_5PIN)))
+/*	if ((display_transfer_mode==LATCHED_16) or ((display_transfer_mode==1) and (display_serial_mode==SERIAL_5PIN)))
 		pinMode(__p5,OUTPUT);
-	if (display_transfer_mode!=1)
+*/
+//	if (display_transfer_mode!=1)
 		_set_direction_registers(display_transfer_mode);
 
 	sbi(P_RST, B_RST);
-#ifdef MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_INIT_LCD
-	delay(1); 
+	_delay_ms(5); 
 	cbi(P_RST, B_RST);
-	delay(10);
+	_delay_ms(15);
 	sbi(P_RST, B_RST);
-	delay(50);
-#else
-	delay(5); 
-	cbi(P_RST, B_RST);
-	delay(15);
-	sbi(P_RST, B_RST);
-	delay(15);
-#endif
+	_delay_ms(15);
 
 	cbi(P_CS, B_CS);
 
+
+
+	#include "tft_drivers/ili9327_8/initlcd.h"
+
+
+/*
 	switch(display_model)
 	{
 #ifndef DISABLE_HX8347A
@@ -248,6 +294,9 @@ void UTFT::InitLCD(byte orientation)
 #endif
 #ifndef DISABLE_ILI9327_8
 	#include "tft_drivers/ili9327_8/initlcd.h"
+#endif
+#ifndef DISABLE_ILI9327_8_UNO
+	#include "tft_drivers/ili9327_8_uno/initlcd.h"
 #endif
 #ifndef DISABLE_SSD1289
 	#include "tft_drivers/ssd1289/initlcd.h"
@@ -322,7 +371,7 @@ void UTFT::InitLCD(byte orientation)
 	#include "tft_drivers/hx8353c/initlcd.h"
 #endif
 	}
-
+*/
 	sbi (P_CS, B_CS); 
 
 	setColor(255, 255, 255);
@@ -342,6 +391,8 @@ void UTFT::setXY(word x1, word y1, word x2, word y2)
 		swap(word, y1, y2)
 	}
 
+#include "tft_drivers/ili9327_8/setxy.h"
+/*
 	switch(display_model)
 	{
 #ifndef DISABLE_HX8347A
@@ -355,6 +406,9 @@ void UTFT::setXY(word x1, word y1, word x2, word y2)
 #endif
 #ifndef DISABLE_ILI9327_8
 	#include "tft_drivers/ili9327_8/setxy.h"
+#endif
+#ifndef DISABLE_ILI9327_8_UNO
+	#include "tft_drivers/ili9327_8_uno/setxy.h"
 #endif
 #ifndef DISABLE_SSD1289
 	#include "tft_drivers/ssd1289/setxy.h"
@@ -426,6 +480,7 @@ void UTFT::setXY(word x1, word y1, word x2, word y2)
 	#include "tft_drivers/hx8353c/setxy.h"
 #endif
 	}
+*/
 }
 
 void UTFT::clrXY()
@@ -486,19 +541,21 @@ void UTFT::fillRect(int x1, int y1, int x2, int y2)
 	{
 		swap(int, y1, y2);
 	}
-	if (display_transfer_mode==16)
+/*	if (display_transfer_mode==16)
 	{
 		cbi(P_CS, B_CS);
 		setXY(x1, y1, x2, y2);
-		//sbi(P_RS, B_RS);
+		sbi(P_RS, B_RS);
 		_fast_fill_16(fch,fcl,((long(x2-x1)+1)*(long(y2-y1)+1)));
 		sbi(P_CS, B_CS);
 	}
-	else if ((display_transfer_mode==8) and (fch==fcl))
+	else 
+*/
+		if (fch==fcl)
 	{
 		cbi(P_CS, B_CS);
 		setXY(x1, y1, x2, y2);
-		//sbi(P_RS, B_RS);
+		sbi(P_RS, B_RS);
 		_fast_fill_8(fch,((long(x2-x1)+1)*(long(y2-y1)+1)));
 		sbi(P_CS, B_CS);
 	}
@@ -566,13 +623,51 @@ void UTFT::drawCircle(int x, int y, int radius)
  
 	cbi(P_CS, B_CS);
 	setXY(x, y + radius, x, y + radius);
-	LCD_Write_DATA(fch,fcl);
+/*	if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
+
 	setXY(x, y - radius, x, y - radius);
-	LCD_Write_DATA(fch,fcl);
+/*	if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 	setXY(x + radius, y, x + radius, y);
-	LCD_Write_DATA(fch,fcl);
+/*	if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 	setXY(x - radius, y, x - radius, y);
-	LCD_Write_DATA(fch,fcl);
+/*	if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
  
 	while(x1 < y1)
 	{
@@ -586,21 +681,93 @@ void UTFT::drawCircle(int x, int y, int radius)
 		ddF_x += 2;
 		f += ddF_x;    
 		setXY(x + x1, y + y1, x + x1, y + y1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 		setXY(x - x1, y + y1, x - x1, y + y1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 		setXY(x + x1, y - y1, x + x1, y - y1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 		setXY(x - x1, y - y1, x - x1, y - y1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 		setXY(x + y1, y + x1, x + y1, y + x1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 		setXY(x - y1, y + x1, x - y1, y + x1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 		setXY(x + y1, y - x1, x + y1, y - x1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 		setXY(x - y1, y - x1, x - y1, y - x1);
-		LCD_Write_DATA(fch,fcl);
+/*		if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}
 	}
 	sbi(P_CS, B_CS);
 	clrXY();
@@ -618,62 +785,67 @@ void UTFT::fillCircle(int x, int y, int radius)
 			}
 }
 
-#ifdef MCUFRIEND_35_TFTLCD_FOR_ARDUINO_2560_SHOW_COLOR_BAR
-void UTFT::show_color_bar()
-{
-	unsigned long i,j;
-	cbi(P_CS, B_CS);
-	clrXY();
-		for (i=0; i<(disp_y_size+1); i++)
-			{
-				for (j=0; j<(disp_x_size+1); j++)
-				{			
-	 				  if(i>350){LCD_Write_DATA(0xFF);LCD_Write_DATA(0xFF);}
- 	 				  else if(i>300){LCD_Write_DATA(0x00);LCD_Write_DATA(0x1F);}
- 	 				  else if(i>250){LCD_Write_DATA(0x07);LCD_Write_DATA(0xE0);}
- 	 				  else if(i>200){LCD_Write_DATA(0x7F);LCD_Write_DATA(0xFF);}
- 	 				  else if(i>150){LCD_Write_DATA(0xF8);LCD_Write_DATA(0x00);}
- 	 				  else if(i>100){LCD_Write_DATA(0xF8);LCD_Write_DATA(0x1F);}
- 	 				  else if(i>50){LCD_Write_DATA(0xFF);LCD_Write_DATA(0xE0);}
-					else {LCD_Write_DATA(213);LCD_Write_DATA(156);}
-				}	
-			}
-	sbi(P_CS, B_CS);
-}
-#endif
-
 void UTFT::clrScr()
 {
 	long i;
 	
 	cbi(P_CS, B_CS);
 	clrXY();
-	if (display_transfer_mode!=1)
-		//sbi(P_RS, B_RS);
-	if (display_transfer_mode==16)
+
+//	if (display_transfer_mode!=1)
+		sbi(P_RS, B_RS);
+/*	if (display_transfer_mode==16)
 		_fast_fill_16(0,0,((disp_x_size+1)*(disp_y_size+1)));
 	else if (display_transfer_mode==8)
+*/
 		_fast_fill_8(0,((disp_x_size+1)*(disp_y_size+1)));
-	else
+/*	else
 	{
+
 		for (i=0; i<((disp_x_size+1)*(disp_y_size+1)); i++)
 		{
 			if (display_transfer_mode!=1)
-				LCD_Writ_Bus16(0,0,display_transfer_mode);
+				LCD_Writ_Bus(0,0,display_transfer_mode);
 			else
 			{
-				LCD_Writ_Bus8(1,0,display_transfer_mode);
-				LCD_Writ_Bus8(1,0,display_transfer_mode);
+				LCD_Writ_Bus(1,0,display_transfer_mode);
+				LCD_Writ_Bus(1,0,display_transfer_mode);
 			}
+
 		}
 	}
+*/
 	sbi(P_CS, B_CS);
 }
 
 void UTFT::fillScr(byte r, byte g, byte b)
 {
-	word color = ((r&248)<<8 | (g&252)<<3 | (b&248)>>3);
-	fillScr(color);
+/*	if (display_model != 31)
+	{*/
+		word color = ((r&248)<<8 | (g&252)<<3 | (b&248)>>3);
+		fillScr(color);
+/*	}
+	else
+	{
+*//*	
+		long i;
+		char ch, cl;
+		
+		ch=((r&248)|g>>5);
+		cl=((g&28)<<3|b>>3);
+	
+		cbi(P_CS, B_CS);
+		clrXY();
+//		if (display_transfer_mode!=1)
+			sbi(P_RS, B_RS);
+	
+		for (i=0; i<((disp_x_size+1)*(disp_y_size+1)); i++)
+		{
+				LCD_Writ_Bus(ch);
+				LCD_Writ_Bus(cl);
+		}
+		sbi(P_CS, B_CS);
+//	}*/
 }
 
 void UTFT::fillScr(word color)
@@ -686,23 +858,27 @@ void UTFT::fillScr(word color)
 
 	cbi(P_CS, B_CS);
 	clrXY();
-	if (display_transfer_mode!=1)
-		//sbi(P_RS, B_RS);
-	if (display_transfer_mode==16)
+//	if (display_transfer_mode!=1)
+		sbi(P_RS, B_RS);
+/*	if (display_transfer_mode==16)
 		_fast_fill_16(ch,cl,((disp_x_size+1)*(disp_y_size+1)));
-	else if ((display_transfer_mode==8) and (ch==cl))
+	else 
+*/
+		if (ch==cl)
 		_fast_fill_8(ch,((disp_x_size+1)*(disp_y_size+1)));
 	else
 	{
 		for (i=0; i<((disp_x_size+1)*(disp_y_size+1)); i++)
 		{
-			if (display_transfer_mode!=1)
-				LCD_Writ_Bus16(ch,cl,display_transfer_mode);
-			else
+//			if (display_transfer_mode!=1)
+				LCD_Writ_Bus(ch);
+				LCD_Writ_Bus(cl);
+/*			else
 			{
-				LCD_Writ_Bus8(1,ch,display_transfer_mode);
-				LCD_Writ_Bus8(1,cl,display_transfer_mode);
+				LCD_Writ_Bus(1,ch,display_transfer_mode);
+				LCD_Writ_Bus(1,cl,display_transfer_mode);
 			}
+*/
 		}
 	}
 	sbi(P_CS, B_CS);
@@ -751,7 +927,16 @@ word UTFT::getBackColor()
 
 void UTFT::setPixel(word color)
 {
-	LCD_Write_DATA((color>>8),(color&0xFF));	// rrrrrggggggbbbbb
+/*	if (display_model != 31)
+	{
+		LCD_Write_DATA((color>>8),(color&0xFF));
+	}
+	else
+*/
+	{
+		LCD_Write_DATA(color>>8);
+		LCD_Write_DATA(color&0xFF);
+	}
 }
 
 void UTFT::drawPixel(int x, int y)
@@ -763,7 +948,7 @@ void UTFT::drawPixel(int x, int y)
 	clrXY();
 }
 
-void UTFT::drawLine(int x1, int y1, int x2, int y2)
+void UTFT::drawLine(int x1, int y1, int x2, int y2) // ?
 {
 	if (y1==y2)
 		drawHLine(x1, y1, x2-x1);
@@ -784,7 +969,17 @@ void UTFT::drawLine(int x1, int y1, int x2, int y2)
 			while (true)
 			{
 				setXY (col, row, col, row);
-				LCD_Write_DATA(fch, fcl);
+/*
+				if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}				
 				if (row == y2)
 					return;
 				row += ystep;
@@ -802,7 +997,17 @@ void UTFT::drawLine(int x1, int y1, int x2, int y2)
 			while (true)
 			{
 				setXY (col, row, col, row);
-				LCD_Write_DATA(fch, fcl);
+/*
+				if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}	
 				if (col == x2)
 					return;
 				col += xstep;
@@ -828,21 +1033,33 @@ void UTFT::drawHLine(int x, int y, int l)
 	}
 	cbi(P_CS, B_CS);
 	setXY(x, y, x+l, y);
+/*
 	if (display_transfer_mode == 16)
 	{
-		//sbi(P_RS, B_RS);
+		sbi(P_RS, B_RS);
 		_fast_fill_16(fch,fcl,l);
 	}
-	else if ((display_transfer_mode==8) and (fch==fcl))
+	else 
+*/
+		if (fch==fcl)
 	{
-		//sbi(P_RS, B_RS);
+		sbi(P_RS, B_RS);
 		_fast_fill_8(fch,l);
 	}
 	else
 	{
 		for (int i=0; i<l+1; i++)
 		{
-			LCD_Write_DATA(fch, fcl);
+/*			if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}	
 		}
 	}
 	sbi(P_CS, B_CS);
@@ -858,21 +1075,32 @@ void UTFT::drawVLine(int x, int y, int l)
 	}
 	cbi(P_CS, B_CS);
 	setXY(x, y, x, y+l);
-	if (display_transfer_mode == 16)
+/*	if (display_transfer_mode == 16)
 	{
-		//sbi(P_RS, B_RS);
+		sbi(P_RS, B_RS);
 		_fast_fill_16(fch,fcl,l);
 	}
-	else if ((display_transfer_mode==8) and (fch==fcl))
+	else 
+*/
+		if (fch==fcl)
 	{
-		//sbi(P_RS, B_RS);
+		sbi(P_RS, B_RS);
 		_fast_fill_8(fch,l);
 	}
 	else
 	{
 		for (int i=0; i<l+1; i++)
 		{
-			LCD_Write_DATA(fch, fcl);
+/*			if (display_model != 31)
+				{
+					LCD_Write_DATA (fch, fcl);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (fch);
+					LCD_Write_DATA (fcl);
+//				}	
 		}
 	}
 	sbi(P_CS, B_CS);
@@ -1182,7 +1410,16 @@ void UTFT::drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int sca
 			for (tc=0; tc<(sx*sy); tc++)
 			{
 				col=pgm_read_word(&data[tc]);
-				LCD_Write_DATA(col>>8,col & 0xff);
+/*				if (display_model != 31)
+				{
+					LCD_Write_DATA(col>>8,col & 0xff);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (col>>8);
+					LCD_Write_DATA (col & 0xff);
+//				}
 			}
 			sbi(P_CS, B_CS);
 		}
@@ -1195,7 +1432,16 @@ void UTFT::drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int sca
 				for (tx=sx-1; tx>=0; tx--)
 				{
 					col=pgm_read_word(&data[(ty*sx)+tx]);
+/*					if (display_model != 31)
+				{
 					LCD_Write_DATA(col>>8,col & 0xff);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (col>>8);
+					LCD_Write_DATA (col & 0xff);
+//				}
 				}
 			}
 			sbi(P_CS, B_CS);
@@ -1214,7 +1460,16 @@ void UTFT::drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int sca
 					{
 						col=pgm_read_word(&data[(ty*sx)+tx]);
 						for (tsx=0; tsx<scale; tsx++)
-							LCD_Write_DATA(col>>8,col & 0xff);
+/*						if (display_model != 31)
+				{
+					LCD_Write_DATA(col>>8,col & 0xff);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (col>>8);
+					LCD_Write_DATA (col & 0xff);
+//				}
 					}
 			}
 			sbi(P_CS, B_CS);
@@ -1231,7 +1486,16 @@ void UTFT::drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int sca
 					{
 						col=pgm_read_word(&data[(ty*sx)+tx]);
 						for (tsx=0; tsx<scale; tsx++)
-							LCD_Write_DATA(col>>8,col & 0xff);
+/*							if (display_model != 31)
+				{
+					LCD_Write_DATA(col>>8,col & 0xff);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (col>>8);
+					LCD_Write_DATA (col & 0xff);
+//				}
 					}
 				}
 			}
@@ -1262,7 +1526,16 @@ void UTFT::drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int deg
 				newy=y+roy+(((ty-roy)*cos(radian))+((tx-rox)*sin(radian)));
 
 				setXY(newx, newy, newx, newy);
-				LCD_Write_DATA(col>>8,col & 0xff);
+/*				if (display_model != 31)
+				{
+					LCD_Write_DATA(col>>8,col & 0xff);
+				}
+				else
+				{
+*/
+					LCD_Write_DATA (col>>8);
+					LCD_Write_DATA (col & 0xff);
+//				}
 			}
 		sbi(P_CS, B_CS);
 	}
@@ -1271,7 +1544,7 @@ void UTFT::drawBitmap(int x, int y, int sx, int sy, bitmapdatatype data, int deg
 
 void UTFT::lcdOff()
 {
-	cbi(P_CS, B_CS);
+/*	cbi(P_CS, B_CS);
 	switch (display_model)
 	{
 	case PCF8833:
@@ -1283,10 +1556,12 @@ void UTFT::lcdOff()
 		break;
 	}
 	sbi(P_CS, B_CS);
+*/
 }
 
 void UTFT::lcdOn()
 {
+/*
 	cbi(P_CS, B_CS);
 	switch (display_model)
 	{
@@ -1299,10 +1574,12 @@ void UTFT::lcdOn()
 		break;
 	}
 	sbi(P_CS, B_CS);
+*/
 }
 
 void UTFT::setContrast(char c)
 {
+/*
 	cbi(P_CS, B_CS);
 	switch (display_model)
 	{
@@ -1313,6 +1590,7 @@ void UTFT::setContrast(char c)
 		break;
 	}
 	sbi(P_CS, B_CS);
+*/
 }
 
 int UTFT::getDisplayXSize()
@@ -1333,6 +1611,7 @@ int UTFT::getDisplayYSize()
 
 void UTFT::setBrightness(byte br)
 {
+/*
 	cbi(P_CS, B_CS);
 	switch (display_model)
 	{
@@ -1343,10 +1622,12 @@ void UTFT::setBrightness(byte br)
 		break;
 	}
 	sbi(P_CS, B_CS);
+*/
 }
 
 void UTFT::setDisplayPage(byte page)
 {
+/*
 	cbi(P_CS, B_CS);
 	switch (display_model)
 	{
@@ -1357,10 +1638,13 @@ void UTFT::setDisplayPage(byte page)
 		break;
 	}
 	sbi(P_CS, B_CS);
+*/
 }
+
 
 void UTFT::setWritePage(byte page)
 {
+/*
 	cbi(P_CS, B_CS);
 	switch (display_model)
 	{
@@ -1371,4 +1655,71 @@ void UTFT::setWritePage(byte page)
 		break;
 	}
 	sbi(P_CS, B_CS);
+*/
+}
+
+
+void UTFT::show_color_bar()
+{
+	unsigned long i,j;
+	cbi(P_CS, B_CS);
+	clrXY();
+	for (i=0; i<(disp_y_size+1); i++)
+		{
+			for (j=0; j<(disp_x_size+1); j++)
+			{			
+/*					if (display_model != 31)
+					{
+					if(i>420)LCD_Write_DATA(0xFF,0xFF);
+ 	 				  else if(i>360)LCD_Write_DATA(0x00,0x1F);
+ 	 				  else if(i>300)LCD_Write_DATA(0x07,0xE0);
+ 	 				  else if(i>240)LCD_Write_DATA(0x7F,0xFF);
+ 	 				  else if(i>180)LCD_Write_DATA(0xF8,0x00);
+ 	 				  else if(i>120)LCD_Write_DATA(0xF8,0x1F);
+ 	 				  else if(i>60)LCD_Write_DATA(0xFF,0xE0);
+					else LCD_Write_DATA(213,156);
+					}
+					else
+*/
+					{
+					if(i>350){
+					LCD_Write_DATA(0xFF);	
+					LCD_Write_DATA(0xFF);
+					}
+					else if(i>300){
+					LCD_Write_DATA(0xFF);
+					LCD_Write_DATA(0xE0);
+					}
+					else if(i>250){
+					LCD_Write_DATA(0x7F);
+					LCD_Write_DATA(0xFF);
+					}
+					else if(i>200){
+					LCD_Write_DATA(0x07);
+					LCD_Write_DATA(0xE0);
+					}
+					else if(i>150){
+					LCD_Write_DATA(0xF8);
+					LCD_Write_DATA(0x1F);
+					}
+					else if(i>100){
+					LCD_Write_DATA(0xF8);
+					LCD_Write_DATA(0x00);
+					}
+					else if(i>50){
+					LCD_Write_DATA(0x00);
+					LCD_Write_DATA(0x1F);
+					}
+					else if(i>=0){
+					LCD_Write_DATA(0x00);
+					LCD_Write_DATA(0x00);
+					}
+					else {
+					LCD_Write_DATA(213);
+					LCD_Write_DATA(156);
+					}
+				}
+			}	
+		}
+sbi(P_CS, B_CS);
 }

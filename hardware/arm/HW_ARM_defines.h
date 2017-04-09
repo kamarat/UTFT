@@ -14,6 +14,14 @@
 // For this shield: RS=22, WR=23, CS=31, RST=33
 //********************************************************************
 
+// Если Вы используете китайский дисплей для Arduino MEGA
+// -------------------------------------
+// Uncomment the following line if you are using this shield
+#define CHINA_MEGA 1
+//
+// For this shield: RS=38, WR=39, CS=40, RST=41
+//********************************************************************
+
 // *** Hardwarespecific defines ***
 #define cbi(reg, bitmask) *reg &= ~bitmask
 #define sbi(reg, bitmask) *reg |= bitmask

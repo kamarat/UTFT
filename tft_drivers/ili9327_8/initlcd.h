@@ -1,9 +1,7 @@
-case ILI9327_8:
-	// Unknown command
-  // LCD_Write_COM(0xE9);
-	// LCD_Write_DATA(0x20);
-	
-  LCD_Write_COM(0x11);  // Exit Sleep
+//case ILI9327_8:
+	//LCD_Write_COM(0xE9);
+	//LCD_Write_DATA(0x20);
+	LCD_Write_COM(0x11);  // Exit Sleep
 	delay(100);
 	
   LCD_Write_COM(0xD1);  // VCOM Control
@@ -75,4 +73,4 @@ case ILI9327_8:
 
 	LCD_Write_COM(0x29);  // Set_display_on / display on
 	LCD_Write_COM(0x2C);  // Write_memory_start / display on
-	break;
+//	break;

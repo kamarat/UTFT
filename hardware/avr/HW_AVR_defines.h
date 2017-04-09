@@ -5,6 +5,8 @@
 //
 // Uncomment the following line to enable this feature
 //#define USE_UNO_SHIELD_ON_MEGA 1
+#define CHINA_MEGA 1
+
 //********************************************************************
 
 // *** Hardwarespecific defines ***
