@@ -21,25 +21,23 @@ void UTFT::LCD_Writ_Bus(char VL)
      * D6 -  6 (PC24)
      * D7 -  7 (PC23)
      */
-    /*REG_PIOB_OWER = 0x08000000; // PB27 enable
-    REG_PIOB_OWDR = 0xF7FFFFFF; // others disable
-    REG_PIOB_ODSR = (VL & 0x20) << 22;
     REG_PIOC_OWER = 0x25E00000; // PC29, PC27, PC26, PC22, PC21 enable
-    REG_PIOC_OWDR = 0xDA1FFFFF;
-    REG_PIOC_ODSR |= ((VL & 0x11) << 22) | ((VL & 0x02) << 20) | ((VL & 0x04) << 27) | ((VL & 0x40) << 18) | ((VL & 0x80) << 16);
+    REG_PIOC_OWDR = 0xDA1FFFFF; // others disable
+    //REG_PIOC_OER = 0x00400000;
+    REG_PIOC_ODSR = ((uint32_t)(VL & 0x11) << 22) | ((uint32_t)(VL & 0x02) << 20) | ((uint32_t)(VL & 0x04) << 27) | 
+                    ((uint32_t)(VL & 0x40) << 18) | ((uint32_t)(VL & 0x80) << 16);
+    
     REG_PIOD_OWER = 0x00000080; // PD7 enable
-    REG_PIOD_OWDR = 0xFFFFFF7F;
-    REG_PIOD_ODSR = (VL & 0x08) << 4;*/
-    digitalWrite(8, VL & 0x01);
-    digitalWrite(9, VL & 0x02);
-    digitalWrite(10, VL & 0x04);
-    digitalWrite(11, VL & 0x08);
-    digitalWrite(4, VL & 0x10);
-    digitalWrite(13, VL & 0x20);
-    digitalWrite(6, VL & 0x40);
-    digitalWrite(7, VL & 0x80);
+    REG_PIOD_OWDR = 0xFFFFFF7F; // others disable
+    //REG_PIOD_OER = 0x00000080;
+    REG_PIOD_ODSR = (uint32_t)(VL & 0x08) << 4;
+    
+    REG_PIOB_OWER = 0x08000000; // PB27 enable
+    REG_PIOB_OWDR = 0xF7FFFFFF; // others disable
+    //REG_PIOB_OER = 0x08000000;
+    REG_PIOB_ODSR = (uint32_t)(VL & 0x20) << 22;
+    
 		pulse_low(P_WR, B_WR);
-     
   #endif  // #ifdef OPEN_SMART_ILI9327
 }
 
@@ -63,24 +61,22 @@ void UTFT::_fast_fill_8(int ch, long pix)
 {
 	long blocks;
     #ifdef OPEN_SMART_ILI9327
-      /*REG_PIOB_OWER = 0x08000000; // PB27 enable
-      REG_PIOB_OWDR = 0xF7FFFFFF; // others disable
-      REG_PIOB_ODSR = (ch & 0x20) << 22;
       REG_PIOC_OWER = 0x25E00000; // PC29, PC27, PC26, PC22, PC21 enable
-      REG_PIOC_OWDR = 0xDA1FFFFF;
-      REG_PIOC_ODSR |= ((ch & 0x11) << 22) | ((ch & 0x02) << 20) | ((ch & 0x04) << 27) | ((ch & 0x40) << 18) | ((ch & 0x80) << 16);
+      REG_PIOC_OWDR = 0xDA1FFFFF; // others disable
+      //REG_PIOC_OER = 0x00400000;
+      REG_PIOC_ODSR = ((int)(ch & 0x11) << 22) | ((int)(ch & 0x02) << 20) | ((int)(ch & 0x04) << 27) | 
+                      ((int)(ch & 0x40) << 18) | ((int)(ch & 0x80) << 16);
+      
       REG_PIOD_OWER = 0x00000080; // PD7 enable
-      REG_PIOD_OWDR = 0xFFFFFF7F;
-      REG_PIOD_ODSR = (ch & 0x08) << 4;
-      pulse_low(P_WR, B_WR);*/
-      digitalWrite(8, ch & 0x01);
-      digitalWrite(9, ch & 0x02);
-      digitalWrite(10, ch & 0x04);
-      digitalWrite(11, ch & 0x08);
-      digitalWrite(4, ch & 0x10);
-      digitalWrite(13, ch & 0x20);
-      digitalWrite(6, ch & 0x40);
-      digitalWrite(7, ch & 0x80);
+      REG_PIOD_OWDR = 0xFFFFFF7F; // others disable
+      //REG_PIOD_OER = 0x00000080;
+      REG_PIOD_ODSR = (uint32_t)(ch & 0x08) << 4;
+      
+      REG_PIOB_OWER = 0x08000000; // PB27 enable
+      REG_PIOB_OWDR = 0xF7FFFFFF; // others disable
+      //REG_PIOB_OER = 0x08000000;
+      REG_PIOB_ODSR = (uint32_t)(ch & 0x20) << 22;
+      
       pulse_low(P_WR, B_WR);
     #endif
 
